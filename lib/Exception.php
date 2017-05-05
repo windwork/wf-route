@@ -18,6 +18,6 @@ namespace wf\route;
  */
 class Exception extends \Exception 
 {
-	
+    
 }
 
