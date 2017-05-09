@@ -7,17 +7,17 @@
  * @copyright Copyright (c) 2008-2017 Windwork Team. (http://www.windwork.org)
  * @license   http://opensource.org/licenses/MIT
  */
-namespace wf\route;
+namespace wf\route\strategy;
 
 /**
  * Windwork简单路由实现
  *
- * @package     wf.route
+ * @package     wf.route.strategy
  * @author      cm <cmpan@qq.com>
  * @link        http://docs.windwork.org/manual/wf.route.html
  * @since       0.1.0
  */
-class Simple implements RouteInterface 
+class Simple implements \wf\route\RouteInterface 
 {
     /**
      * 
@@ -30,7 +30,7 @@ class Simple implements RouteInterface
      * @var array
     */
     public $cfg = [
-        'useModule'   => 0,  // 是否启用模块
+        'useModule'   => 1,  // 是否启用模块
         
         'defaultMod'  => 'common',   // 默认模块，仅启用模块后有效
         'defaultCtl'  => 'default',  // 默认控制器
@@ -355,6 +355,7 @@ class Simple implements RouteInterface
     /**
      * 设置ruoter配置参数
      * @param array $cfg
+     * @throws \wf\route\Exception
      */
     private function setCfg(array $cfg) 
     {
@@ -362,7 +363,7 @@ class Simple implements RouteInterface
         if (!empty($cfg['siteUrl']) && (empty($cfg['hostInfo']) || empty($cfg['basePath']))) {
             // siteUrl格式检查
             if (!preg_match("/^(http[s]?:\\/\\/.+?)(\\/.*)/i", $cfg['siteUrl'], $siteUrlMatch)) {
-                throw new Exception('siteUrl参数格式不是http/https网址！');
+                throw new \wf\route\Exception('siteUrl参数格式不是http/https网址！');
             }
 
             $cfg['hostInfo'] = $siteUrlMatch[1];

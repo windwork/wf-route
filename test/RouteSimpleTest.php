@@ -2,12 +2,12 @@
 
 require_once __DIR__ . '/../lib/RouteVO.php';
 require_once __DIR__ . '/../lib/RouteInterface.php';
-require_once __DIR__ . '/../lib/Simple.php';
+require_once __DIR__ . '/../lib/strategy/Simple.php';
 require_once __DIR__ . '/../lib/Exception.php';
 
 use \wf\route\RouteVO;
 use \wf\route\RouteInterface;
-use \wf\route\Simple;
+use \wf\route\strategy\Simple;
 
 /**
  * RouteSimple test case.
@@ -67,7 +67,7 @@ class RouteSimpleTest extends PHPUnit_Framework_TestCase {
             ],
         ];
                 
-        $routeObj = new \wf\route\Simple($cfgs);
+        $routeObj = new Simple($cfgs);
         
         // 默认首页
         $routeObj->parse('/');
@@ -219,7 +219,7 @@ class RouteSimpleTest extends PHPUnit_Framework_TestCase {
     	    'alias'       => [],
         ];
         
-        $router = new \wf\route\Simple($cfgs);
+        $router = new Simple($cfgs);
         
         // 生成URL
         // 未启用URL重写链接
@@ -234,7 +234,7 @@ class RouteSimpleTest extends PHPUnit_Framework_TestCase {
 
         // 启用URL重写链接
         $cfgs['rewrite'] = 1;
-        $router = new \wf\route\Simple($cfgs);
+        $router = new Simple($cfgs);
         $exp3 = 'goods.detail/5.html';
         $url3 = $router->createUrl('goods.detail/5');
         $this->assertEquals($exp3, $url3);
@@ -258,7 +258,7 @@ class RouteSimpleTest extends PHPUnit_Framework_TestCase {
         $cfgs['alias']['reg'] = 'member.account.register';
         $cfgs['alias']['logout'] = 'member.auth.logout';
 
-        $router = new \wf\route\Simple($cfgs);
+        $router = new Simple($cfgs);
         
         // member.account.register.html 被简化成reg.html
         $exp5 = 'reg.html'; 
