@@ -38,16 +38,16 @@ $router = new \wf\route\Simple($cfgs);
 ## 1、解析URL
 从URL中获取模块、控制器、操作、操作参数，从而可实现动态执行控制器的操作。
 
-不启用模块
+不启用模块，所有控制器都放在app/controller文件夹中
 ```
 $uri = 'https://www.my.com/demo/user.auth.login/type:wx/vip:1.html?page=1#axx';
 $routeObj->parse($uri);
-$entry = $routeObj->getEntry();
-print_r($entry);
+
+print_r($routeObj);
 ```
 结果为
 ```
-wf\route\RouteVO Object
+wf\route\strategy\Simple Object
 (
     [ctlClass] => \app\controller\user\AuthController
     [mod] => 
@@ -67,9 +67,10 @@ wf\route\RouteVO Object
     [anchor] => axx
 )
 ```
-设置useModule参数为true，启用模块
+
+设置useModule参数为true，启用模块,模块控制器类放在app/{模块名}/controller文件夹中
 ```
-wf\route\RouteVO Object
+wf\route\strategy\Simple Object
 (
     [ctlClass] => \app\user\controller\AuthController
     [mod] => user
@@ -140,13 +141,13 @@ $router->createUrl('member.account.register');
 // member.auth.logout.html 被简化成logout.html
 // logout.html
 $router->createUrl('member.auth.logout');
-	
+    
 // 使用子域名
 /*
 // 设置参数
 'domain' => [
-	'wx' => 'https://weixin.my.com/',
-	'user' => 'https://user.my.com/',
+    'wx' => 'https://weixin.my.com/',
+    'user' => 'https://user.my.com/',
 ] 
 */
 // user.开头使用 https://user.my.com，后面部分不变
@@ -170,7 +171,7 @@ $router->createUrl('wx.login', [], 1);
  * @return string
  */
 function url($uri, $fullUrl = false) {
-	return dsp()->getRouter()->createUrl($uri, [], $fullUrl);
+    return dsp()->getRouter()->createUrl($uri, [], $fullUrl);
 }
 ```
 
@@ -192,62 +193,6 @@ url('payment.pay.post/type:wx', 1)
 
 ## 3、自定义路由
 
-你可以通过实现 \wf\route\RouteInterface 接口来实现自定义路由。
+你可以通过实现 \wf\route\RouteAbstract抽象类约束实现类必须实现的方法及通过定义指定的属性来规范路由参数。
+从而让你可以使用官方提供简单路由，也允许你自定义路由，实现按规则解析URL和生成URL。
 
-我们通过\wf\route\RouteVO类来规范路由参数，从而让你可以使用官方提供简单路由，也允许你自定义路由，实现按规则解析URL和生成URL。
-如果RouteVO类参数不足，可继承RouteVO类定义新的类来使用。
-```
-namespace wf\route;
-
-class RouteVO 
-{
-    /**
-     * 控制器类名（带命名空间）
-     * 转发器将根据该属性创建控制器类实例
-     * @var string
-     */
-    public $ctlClass = '';
-    
-    /**
-     * 模块ID
-     * @var string
-     */
-    public $mod = '';
-    
-    /**
-     * 控制器ID
-     * @var string
-     */
-    public $ctl = '';
-    
-    /**
-     * 操作ID
-     * @var string
-     */
-    public $act = '';
-    
-    /**
-     * 操作方法参数，每个元素所谓一个参数传递到action方法的参数
-     * @var array
-     */
-    public $actParams = [];
-    
-    /**
-     * 请求键值对参数
-     * @var array
-     */
-    public $attributes = [];
-    
-    /**
-     * 查询串
-     * @var string
-     */
-    public $query = '';
-
-    /**
-     * 锚点值
-     * @var string
-     */
-    public $anchor = '';
-}
-```

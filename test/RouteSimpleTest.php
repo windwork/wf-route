@@ -1,12 +1,10 @@
 <?php
 
-require_once __DIR__ . '/../lib/RouteVO.php';
-require_once __DIR__ . '/../lib/RouteInterface.php';
+require_once __DIR__ . '/../lib/RouteAbstract.php';
 require_once __DIR__ . '/../lib/strategy/Simple.php';
 require_once __DIR__ . '/../lib/Exception.php';
 
-use \wf\route\RouteVO;
-use \wf\route\RouteInterface;
+use \wf\route\RouteAbstract;
 use \wf\route\strategy\Simple;
 
 /**
@@ -40,7 +38,7 @@ class RouteSimpleTest extends PHPUnit_Framework_TestCase {
     /**
      * 解析链接，取得路由参数
      * @param string $uri
-     * @return \wf\route\RouteInterface
+     * @return \wf\route\RouteAbstract
      */
     public function testParse() {
         $cfgs = [
@@ -71,31 +69,28 @@ class RouteSimpleTest extends PHPUnit_Framework_TestCase {
         
         // 默认首页
         $routeObj->parse('/');
-        $routeVO = $routeObj->getRouteVO();
-        $this->assertEquals($routeVO->mod, '');
-        $this->assertEquals($routeVO->ctl, $cfgs['defaultCtl']);
-        $this->assertEquals($routeVO->act, $cfgs['defaultAct']);
+        $this->assertEquals($routeObj->mod, '');
+        $this->assertEquals($routeObj->ctl, $cfgs['defaultCtl']);
+        $this->assertEquals($routeObj->act, $cfgs['defaultAct']);
         
         // article.detail/about/us （在配置中设置简写为about）
         $routeObj->parse('about.html');
-        $routeVO1 = $routeObj->getRouteVO();
         
-        $uri = "{$routeVO1->ctl}.{$routeVO1->act}";
+        $uri = "{$routeObj->ctl}.{$routeObj->act}";
         $this->assertEquals('article.detail', $uri);
         
         // welcome.main.hello（在配置中设置简写为hi）
         $uri = 'https://www.my.com/demo/hi/yes/i/do.html';
         $routeObj->parse($uri);
-        $routeVO2 = $routeObj->getRouteVO();
         
         $rUri1 = $routeObj->toUrl();
         $this->assertEquals('hi/yes/i/do.html', $rUri1);
         
         // ctl/act
-        $uri = "{$routeVO2->ctl}.{$routeVO2->act}"; 
+        $uri = "{$routeObj->ctl}.{$routeObj->act}"; 
         $this->assertEquals('welcome.main.hello', $uri);
         // actParams
-        $this->assertEquals('yes/i/do', implode('/', $routeVO2->actParams));
+        $this->assertEquals('yes/i/do', implode('/', $routeObj->actParams));
         
         // 使用模块
         $cfgs['useModule'] = 1;
@@ -103,29 +98,28 @@ class RouteSimpleTest extends PHPUnit_Framework_TestCase {
         
         $uri = 'https://www.my.com/demo/hi.html';
         $routeObj->parse($uri);
-        $routeVO3 = $routeObj->getRouteVO();
         
         $uri = 'https://www.my.com/demo/user.auth.login/type:wx/vip:1.html?page=1#axx';
         $routeObj->parse($uri);
-        $routeVO4 = $routeObj->getRouteVO();
+        
         print "\n4===========\n";
-        print_r($routeVO4);
+        print_r($routeObj);
         
         $uri = 'https://www.my.com/demo/user.manage.account.list/dosth/dosth2/page:1/rows:50?aa=aab&bb=bbb#auxx';
         $routeObj->parse($uri);
-        $routeVO5 = $routeObj->getRouteVO();
-        print "\n5===========\n";
-        print_r($routeVO5);
         
-        $this->assertEquals($routeVO5->mod, 'user');
-        $this->assertEquals($routeVO5->ctl, 'manage.account');
-        $this->assertEquals($routeVO5->act, 'list');
-        $this->assertEquals($routeVO5->query, 'aa=aab&bb=bbb');
-        $this->assertEquals($routeVO5->anchor, 'auxx');
-        $this->assertEquals($routeVO5->actParams[0], 'dosth');
-        $this->assertEquals($routeVO5->actParams[1], 'dosth2');
-        $this->assertEquals($routeVO5->attributes['page'], 1);
-        $this->assertEquals($routeVO5->attributes['rows'], 50);
+        print "\n5===========\n";
+        print_r($routeObj);
+        
+        $this->assertEquals($routeObj->mod, 'user');
+        $this->assertEquals($routeObj->ctl, 'manage.account');
+        $this->assertEquals($routeObj->act, 'list');
+        $this->assertEquals($routeObj->query, 'aa=aab&bb=bbb');
+        $this->assertEquals($routeObj->anchor, 'auxx');
+        $this->assertEquals($routeObj->actParams[0], 'dosth');
+        $this->assertEquals($routeObj->actParams[1], 'dosth2');
+        $this->assertEquals($routeObj->attributes['page'], 1);
+        $this->assertEquals($routeObj->attributes['rows'], 50);
 
         // 不使用URL重写
         $cfgs['rewrite'] = 0;
@@ -133,14 +127,14 @@ class RouteSimpleTest extends PHPUnit_Framework_TestCase {
         
         $uri = 'https://www.my.com/demo/index.php?hi/you/are/page:1/rows:20#ahxxx';
         $routeObj->parse($uri);
-        $routeVO8 = $routeObj->getRouteVO();
-        $this->assertEquals($routeVO8->mod, 'welcome');
-        $this->assertEquals($routeVO8->ctl, 'main');
-        $this->assertEquals($routeVO8->act, 'hello');
-        $this->assertEquals($routeVO8->attributes['page'], 1);
-        $this->assertEquals($routeVO8->attributes['rows'], 20);
-        $this->assertEquals($routeVO8->actParams[0], 'you');
-        $this->assertEquals($routeVO8->actParams[1], 'are');
+        
+        $this->assertEquals($routeObj->mod, 'welcome');
+        $this->assertEquals($routeObj->ctl, 'main');
+        $this->assertEquals($routeObj->act, 'hello');
+        $this->assertEquals($routeObj->attributes['page'], 1);
+        $this->assertEquals($routeObj->attributes['rows'], 20);
+        $this->assertEquals($routeObj->actParams[0], 'you');
+        $this->assertEquals($routeObj->actParams[1], 'are');
         
         // 从router实例再转回URL
         $toUrl = $routeObj->toUrl(1);
@@ -157,30 +151,29 @@ class RouteSimpleTest extends PHPUnit_Framework_TestCase {
         $cfgs['encode'] = 1;
         $routeObj = new Simple($cfgs);
         $routeObj->parse('q_aGkvbGFuZzp6aC1DTi90aXRsZTolRTQlQjglQUQlRTYlOTYlODc.html');
-        $routeVO6 = $routeObj->getRouteVO();
-        
-        $this->assertEquals($routeVO6->mod, 'welcome');
-        $this->assertEquals($routeVO6->ctl, 'main');
-        $this->assertEquals($routeVO6->act, 'hello');
-        $this->assertEquals($routeVO6->query, '');
-        $this->assertEquals($routeVO6->anchor, '');
-        $this->assertEquals($routeVO6->attributes['lang'], 'zh-CN');
+                
+        $this->assertEquals($routeObj->mod, 'welcome');
+        $this->assertEquals($routeObj->ctl, 'main');
+        $this->assertEquals($routeObj->act, 'hello');
+        $this->assertEquals($routeObj->query, '');
+        $this->assertEquals($routeObj->anchor, '');
+        $this->assertEquals($routeObj->attributes['lang'], 'zh-CN');
 
         $routeObj->parse('https://www.my.com/demo/q_aGkvbGFuZzp6aC1DTi90aXRsZTolRTQlQjglQUQlRTYlOTYlODc.html');
-        $routeVO7 = $routeObj->getRouteVO();
-        $this->assertEquals($routeVO7->mod, 'welcome');
-        $this->assertEquals($routeVO7->ctl, 'main');
-        $this->assertEquals($routeVO7->act, 'hello');
-        $this->assertEquals($routeVO7->query, '');
-        $this->assertEquals($routeVO7->anchor, '');
-        $this->assertEquals($routeVO7->attributes['lang'], 'zh-CN');
+        
+        $this->assertEquals($routeObj->mod, 'welcome');
+        $this->assertEquals($routeObj->ctl, 'main');
+        $this->assertEquals($routeObj->act, 'hello');
+        $this->assertEquals($routeObj->query, '');
+        $this->assertEquals($routeObj->anchor, '');
+        $this->assertEquals($routeObj->attributes['lang'], 'zh-CN');
         
         $uri = 'https://www.my.com/demo/index.php?hi/you/are/page:1/rows:20#ahxxx';
         $routeObj->parse($uri);
-        $routeVO8 = $routeObj->getRouteVO();
-        $this->assertEquals($routeVO8->mod, 'welcome');
-        $this->assertEquals($routeVO8->ctl, 'main');
-        $this->assertEquals($routeVO8->act, 'hello');
+        
+        $this->assertEquals($routeObj->mod, 'welcome');
+        $this->assertEquals($routeObj->ctl, 'main');
+        $this->assertEquals($routeObj->act, 'hello');
         
         $url = $routeObj->toUrl();
         $this->assertEquals('index.php?q_aGkveW91L2FyZS9wYWdlOjEvcm93czoyMA.html#ahxxx', $url);
@@ -195,28 +188,28 @@ class RouteSimpleTest extends PHPUnit_Framework_TestCase {
      */
     public function testCreateUrl() {
         $cfgs = [
-    	    'useModule'   => 0,  // 是否启用模块
-    	    
-    	    'defaultMod'  => 'common',   // 默认模块
-    	    'defaultCtl'  => 'default',  // 默认控制器
-    	    'defaultAct'  => 'index',    // 默认action
-    	    
-    	    'rewrite'     => 0,          // 是否启用URLRewrite
-    	    'rewriteExt'  => '.html',    // URL重写链接后缀，如：.html
-    	    'fullUrl'     => 0,          // 是否使用完整URL（http://开头）
-    	    'encode'      => 0,          // 是否对链接参数进行编码，一般不想让用户直接看到链接参数则启用
+            'useModule'   => 0,  // 是否启用模块
+            
+            'defaultMod'  => 'common',   // 默认模块
+            'defaultCtl'  => 'default',  // 默认控制器
+            'defaultAct'  => 'index',    // 默认action
+            
+            'rewrite'     => 0,          // 是否启用URLRewrite
+            'rewriteExt'  => '.html',    // URL重写链接后缀，如：.html
+            'fullUrl'     => 0,          // 是否使用完整URL（http://开头）
+            'encode'      => 0,          // 是否对链接参数进行编码，一般不想让用户直接看到链接参数则启用
     
-    	    // 入口文件名
-    	    'scriptName'  => 'index.php',
-    	    
-    	    // 站点首页网址
-    	    'siteUrl'     => 'https://www.yoursite.com/demo/',
-    	    
-    	    // 模块/控制器指定域名
-    	    'domain'      => [],
-    	    
-    	    // URL简写规则
-    	    'alias'       => [],
+            // 入口文件名
+            'scriptName'  => 'index.php',
+            
+            // 站点首页网址
+            'siteUrl'     => 'https://www.yoursite.com/demo/',
+            
+            // 模块/控制器指定域名
+            'domain'      => [],
+            
+            // URL简写规则
+            'alias'       => [],
         ];
         
         $router = new Simple($cfgs);

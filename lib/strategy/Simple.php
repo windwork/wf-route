@@ -17,14 +17,8 @@ namespace wf\route\strategy;
  * @link        http://docs.windwork.org/manual/wf.route.html
  * @since       0.1.0
  */
-class Simple implements \wf\route\RouteInterface 
-{
-    /**
-     * 
-     * @var \wf\route\RouteVO
-     */
-    protected $vo;
-    
+class Simple extends \wf\route\RouteAbstract
+{    
     /**
      * 配置信息
      * @var array
@@ -74,31 +68,19 @@ class Simple implements \wf\route\RouteInterface
     /**
      * 初始化路由实体
      */
-    protected function initRouteVO() 
-    {
-        $this->vo = new \wf\route\RouteVO();
-        
+    protected function init() 
+    {        
         // 启用模块则设置默认模块
         if ($this->cfg['useModule']) {
-            $this->vo->mod = $this->cfg['defaultMod'];
+            $this->mod = $this->cfg['defaultMod'];
         }
         
         // 设置默认控制器
-        $this->vo->ctl = $this->cfg['defaultCtl'];
+        $this->ctl = $this->cfg['defaultCtl'];
         
         // 设置默认操作
-        $this->vo->act = $this->cfg['defaultAct'];
+        $this->act = $this->cfg['defaultAct'];
     }
-    
-    /**
-     * 
-     * {@inheritDoc}
-     * @see \wf\route\RouteInterface::getRouteVO()
-     */
-    public function getRouteVO() 
-    {
-        return $this->vo;
-    }    
 
     /**
      * 分析站内URL
@@ -106,11 +88,11 @@ class Simple implements \wf\route\RouteInterface
      * 取得链接应该映射到哪个模块、控制器、动作，并且传什么参数到动作方法中。
      * 
      * @param string $uri
-     * @return \wf\route\RouteInterface
+     * @return \wf\route\RouteAbstract
      */
     public function parse($uri) 
     {
-        $this->initRouteVO();
+        $this->init();
         $opts = &$this->cfg;
         
         // 取得index.php?及后面部分
@@ -136,7 +118,7 @@ class Simple implements \wf\route\RouteInterface
         
         if (!$uri) {
             // 首页
-            $this->buildVOCtlClass();            
+            $this->buildCtlClass();            
             return $this;
         }
 
@@ -145,13 +127,13 @@ class Simple implements \wf\route\RouteInterface
 
         // 提取锚，并把锚串从uri中去掉
         if(false !== $pos = strpos($uri, '#')) {
-            $this->vo->anchor = substr($uri, $pos + 1);
+            $this->anchor = substr($uri, $pos + 1);
             $uri = substr($uri, 0, $pos);
         }
 
         // 提取常规查询串参数，并把查询串从uri中去掉
         if (false !== $pos = strpos($uri, '&')) {
-            $this->vo->query = substr($uri, $pos + 1);
+            $this->query = substr($uri, $pos + 1);
             $uri = substr($uri, 0, $pos);
         }
         
@@ -172,7 +154,7 @@ class Simple implements \wf\route\RouteInterface
             $attrStr = str_replace(':', '=', implode('&', $match[1]));
             parse_str($attrStr, $attributes);
             
-            $this->vo->attributes = $attributes;
+            $this->attributes = $attributes;
 
             $uri = preg_replace("#/[^/&]+?\\:([^/&\\?]|$)*#", '', $uri);
         }
@@ -204,40 +186,40 @@ class Simple implements \wf\route\RouteInterface
 
             // 如果启用模块则提取模块，则提取第一个点号前面的模块名
             if ($opts['useModule']) {
-                $this->vo->mod = strtolower(array_shift($routeArr));
+                $this->mod = strtolower(array_shift($routeArr));
             }
             
             // 如果acttion不为空，则取最后一个点号后面的action名
             if(isset($routeArr[1])) {
                 // 
-                $this->vo->act = strtolower(array_pop($routeArr)); // else = defaultAct
+                $this->act = strtolower(array_pop($routeArr)); // else = defaultAct
             }            
             
             // 取控制器类标识
             if ($routeArr) {
-                $this->vo->ctl = strtolower(join('.', $routeArr)); // else = defaultCtl
+                $this->ctl = strtolower(join('.', $routeArr)); // else = defaultCtl
             }
         } // else mod = defaultMod
         
         // action参数
-        $this->vo->actParams = $actArgs;
+        $this->actParams = $actArgs;
 
-        $this->buildVOCtlClass();
+        $this->buildCtlClass();
         
         return $this;
     }
     
     /**
      * {@inheritDoc}
-     * @see \wf\route\RouteInterface::toUrl()
+     * @see \wf\route\RouteAbstract::toUrl()
      */
     public function toUrl($fullUrl = false) 
     {
-        $uri = trim("{$this->vo->mod}.{$this->vo->ctl}.{$this->vo->act}", '.');
-        if ($this->vo->actParams) {
-            $uri .= '/' . implode('/', $this->vo->actParams);
+        $uri = trim("{$this->mod}.{$this->ctl}.{$this->act}", '.');
+        if ($this->actParams) {
+            $uri .= '/' . implode('/', $this->actParams);
         }
-        $url = $this->buildUrL($uri, $this->vo->attributes, $this->vo->query, $this->vo->anchor, $fullUrl);
+        $url = $this->buildUrL($uri, $this->attributes, $this->query, $this->anchor, $fullUrl);
         return $url;
     }
 
@@ -377,14 +359,14 @@ class Simple implements \wf\route\RouteInterface
 
 
     /**
-     * 根据vo的mod、ctl属性生成vo类的控制器类名属性 ctlClass
+     * 根据mod、ctl属性生成控制器类名属性 ctlClass
      * 控制器类名命名规范：首字母大写，后面加上Controller，其它字母都是小写
      * @return string
      */
-    protected function buildVOCtlClass() 
+    protected function buildCtlClass() 
     {
-        $mod = $this->vo->mod;
-        $ctl = $this->vo->ctl;
+        $mod = $this->mod;
+        $ctl = $this->ctl;
         
         if(empty($mod)) {
             // 不启用模块
@@ -404,7 +386,7 @@ class Simple implements \wf\route\RouteInterface
             $name = $ctl;
         }
     
-        $this->vo->ctlClass = $ns . '\\' . ucfirst($name) . 'Controller';
+        $this->ctlClass = $ns . '\\' . ucfirst($name) . 'Controller';
     }
     
 }

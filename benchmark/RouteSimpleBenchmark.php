@@ -1,7 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../lib/RouteVO.php';
-require_once __DIR__ . '/../lib/RouteInterface.php';
+require_once __DIR__ . '/../lib/RouteAbstract.php';
 require_once __DIR__ . '/../lib/strategy/Simple.php';
 require_once __DIR__ . '/../lib/Exception.php';
 
