@@ -67,14 +67,74 @@ abstract class RouteAbstract
      * @var string
      */
     public $anchor = '';
+
+    /**
+     * 配置信息
+     * @var array
+     */
+    public $cfg = [
+        'useModule'   => 1,  // 是否启用模块
+    
+        'defaultMod'  => 'common',   // 默认模块，仅启用模块后有效
+        'defaultCtl'  => 'default',  // 默认控制器
+        'defaultAct'  => 'index',    // 默认action
+    
+        'rewrite'     => 1,          // 是否启用URLRewrite
+        'rewriteExt'  => '',         // URL重写链接后缀，如：.html
+        'fullUrl'     => 0,          // 是否使用完整URL（http://开头）
+        'encode'      => 0,          // 是否对链接参数进行编码，一般不想让用户直接看到链接参数则启用
+    
+        // 入口文件名
+        'scriptName'  => 'index.php',
+    
+        // 站点首页网址
+        'siteUrl'     => '',
+    
+        // 站点域名（可自动从siteUrl参数中提取），如：http://www.yoursite.com
+        'hostInfo'    => '',
+    
+        // 站点目录（可自动从siteUrl参数中提取），如：/ctx/
+        'basePath'    => '',
+    
+        // 模块/控制器指定域名
+        'domain'      => [],
+    
+        // URL简写规则
+        'alias'       => [],
+    ];
     
     /**
-     * 通过构造函数设置配置信息
-     * @param array $options
+     * 构造函数设置配置信息
+     * @param array $cfg = []
      */
-    public function __construct(array $options = [])
+    public function __construct(array $cfg = [])
     {
+        if($cfg) {
+            $this->setCfg($cfg);
+        }
+    }
+    
+    /**
+     * 设置ruoter配置参数
+     * @param array $cfg
+     * @throws \wf\route\Exception
+     */
+    public function setCfg(array $cfg) 
+    {
+        // 从siteUrl提取hostInfo、basePath参数
+        if (!empty($cfg['siteUrl']) && (empty($cfg['hostInfo']) || empty($cfg['basePath']))) {
+            // siteUrl格式检查
+            if (!preg_match("/^(http[s]?:\\/\\/.+?)(\\/.*)/i", $cfg['siteUrl'], $siteUrlMatch)) {
+                throw new \wf\route\Exception('siteUrl参数格式不是http/https网址！');
+            }
+
+            $cfg['hostInfo'] = $siteUrlMatch[1];
+            $cfg['basePath'] = $siteUrlMatch[2];
+        }
         
+        $this->cfg = array_replace_recursive($this->cfg, $cfg);
+                
+        return $this;
     }
 
     /**
