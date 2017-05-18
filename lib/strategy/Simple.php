@@ -253,7 +253,7 @@ class Simple extends \wf\route\RouteAbstract
         }
         
         // 加上伪静态后缀（不论是否启用URL Rewrite）
-        $url .= $this->cfg['rewriteExt'];
+        $url && $url .= $this->cfg['rewriteExt'];
         
         // 未启用url重写，补充base url
         if(!$this->cfg['rewrite']) {
