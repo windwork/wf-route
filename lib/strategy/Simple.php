@@ -309,7 +309,7 @@ class Simple extends \wf\route\RouteAbstract
         
         if (strpos($ctl, '.')) {
             // 控制器类放在controller文件夹的子文件夹
-            $name = substr($ctl, strrpos($ctl, '.'));
+            $name = substr($ctl, strrpos($ctl, '.') + 1);
             $subNS = substr($ctl, 0, strrpos($ctl, '.'));
             $ns .= '\\' . strtr($subNS, '.', '\\');
         } else {
