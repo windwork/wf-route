@@ -272,8 +272,12 @@ class Simple extends \wf\route\RouteAbstract
             $url = rtrim($this->cfg['domain'][$mod], '/') . '/' . trim($url, '/');
         } elseif ($fullUrl || $this->cfg['fullUrl']) {
             // 带域名的完整URL
-            $url = rtrim($this->cfg['basePath'], '/') . '/' . trim($url, '/');
-            $url = rtrim($this->cfg['hostInfo'], '/') . '/' . trim($url, '/');
+            if ($this->cfg['siteUrl']) {
+                $url = rtrim($this->cfg['siteUrl'], '/') . '/' . trim($url, '/');
+            } else {
+                $url = rtrim($this->cfg['basePath'], '/') . '/' . trim($url, '/');
+                $url = rtrim($this->cfg['hostInfo'], '/') . '/' . trim($url, '/');
+            }
         }
 
         // 查询串

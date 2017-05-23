@@ -297,7 +297,7 @@ class RouteSimpleTest extends PHPUnit_Framework_TestCase {
                 'm'          => 'https://m.my.com',
             ],
             
-            'staticSiteUrl'    => '',
+            'staticPath'       => '',
             'rewrite'          => 1,       // 启用URLRewrite
             'rewriteExt'       => '.html', // 链接后缀，如：.html
             'fullUrl'          => 0,       // 是否使用完整URL（http://开头）
