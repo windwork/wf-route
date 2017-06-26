@@ -109,32 +109,22 @@ abstract class RouteAbstract
      */
     public function __construct(array $cfg = [])
     {
-        if($cfg) {
-            $this->setCfg($cfg);
+        if(!$cfg) {
+            return ;
         }
-    }
-    
-    /**
-     * 设置ruoter配置参数
-     * @param array $cfg
-     * @throws \wf\route\Exception
-     */
-    public function setCfg(array $cfg) 
-    {
+        
         // 从siteUrl提取hostInfo、basePath参数
         if (!empty($cfg['siteUrl']) && (empty($cfg['hostInfo']) || empty($cfg['basePath']))) {
             // siteUrl格式检查
             if (!preg_match("/^(http[s]?:\\/\\/.+?)(\\/.*)/i", $cfg['siteUrl'], $siteUrlMatch)) {
                 throw new \wf\route\Exception('siteUrl参数格式不是http/https网址！');
             }
-
+            
             $cfg['hostInfo'] = $siteUrlMatch[1];
             $cfg['basePath'] = $siteUrlMatch[2];
         }
         
         $this->cfg = array_replace_recursive($this->cfg, $cfg);
-                
-        return $this;
     }
 
     /**

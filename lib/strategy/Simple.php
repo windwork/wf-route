@@ -23,7 +23,7 @@ class Simple extends \wf\route\RouteAbstract
     /**
      * 初始化路由实体
      */
-    protected function init() 
+    protected function initRoutArg() 
     {        
         // 启用模块则设置默认模块
         if ($this->cfg['useModule']) {
@@ -47,7 +47,7 @@ class Simple extends \wf\route\RouteAbstract
      */
     public function parse($uri) 
     {
-        $this->init();
+        $this->initRoutArg();
         $opts = &$this->cfg;
         
         // 取得index.php?及后面部分

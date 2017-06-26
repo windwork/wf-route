@@ -32,7 +32,7 @@ $cfgs = [
     'alias'       => [],
 ];
 // 创建实例
-$router = new \wf\route\Simple($cfgs);
+$router = new \wf\route\strategy\Simple($cfgs);
 ```
 
 ## 1、解析URL
