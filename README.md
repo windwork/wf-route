@@ -196,3 +196,9 @@ url('payment.pay.post/type:wx', 1)
 你可以通过实现 \wf\route\RouteAbstract抽象类约束实现类必须实现的方法及通过定义指定的属性来规范路由参数。
 从而让你可以使用官方提供简单路由，也允许你自定义路由，实现按规则解析URL和生成URL。
 
+
+<br />
+<br />
+> ### 要了解更多？
+> - [官方完整文档首页](http://docs.windwork.org/manual/)
+> - [官方源码首页](https://github.com/windwork
