@@ -4,6 +4,17 @@ Windwork路由的职责：
 - 从url中提取要执行的控制器类、控制器操作、操作的参数及URL其他参数
 - 生成符合路由规则的URL。
 
+## 安装
+该组件已包含在Windwork框架中，如果你已安装Windwork框架则可以直接使用。
+
+- 安装方式一：通过composer安装（推荐）
+```
+composer require windwork/wf
+```
+
+- 安装方式二：传统方式安装
+[下载源码](https://github.com/windwork/wf/releases)后，解压源码到项目文件夹中，然后require_once $PATH_TO_WF/core/lib/Loader.php文件，即可自动加载组件中的类。
+
 ## 创建路由实例
 ```
 // 可设置的路由参数
