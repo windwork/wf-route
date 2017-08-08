@@ -42,7 +42,7 @@ for ($i = 0; $i < 10000; $i++) {
 }
 
 $useTime = microtime(1) - $startTime;
-print "parse  {$execTimes}(times), take: ";
+print "1. parse  {$execTimes}(times), take: ";
 print $useTime . "(s)\n";
 
 // 2
@@ -54,7 +54,7 @@ for ($i = 0; $i < 10000; $i++) {
 }
 
 $useTime = microtime(1) - $startTime;
-print "parse  {$execTimes}(times), take: ";
+print "2. parse  {$execTimes}(times), take: ";
 print $useTime . "(s)\n";
 
 // 3
@@ -65,18 +65,42 @@ for ($i = 0; $i < 10000; $i++) {
 }
 
 $useTime = microtime(1) - $startTime;
-print "create {$execTimes}(times), take: ";
+print "3. create {$execTimes}(times), take: ";
 print $useTime . "(s)\n";
 
 // 4
 $startTime = microtime(1);
 $routeObj = new \wf\route\strategy\Simple($cfgs);
 for ($i = 0; $i < 10000; $i++) {
-    $routeObj->createUrl('a.b.c/r:' . mt_rand(10000, 99999));
+    $routeObj->createUrl('a.b.c/' . mt_rand(10000, 99999));
 }
 
 $useTime = microtime(1) - $startTime;
-print "create {$execTimes}(times), take: ";
+print "4. create {$execTimes}(times), take: ";
 print $useTime . "(s)\n";
 
+
+print "\n5. create {$execTimes}(times), take:";
+
+$startTime = microtime(1);
+for ($i = 0; $i < 10000; $i++) {
+    simpleUrl('a.b.c/r:' . mt_rand(10000, 99999));
+}
+
+$useTime = microtime(1) - $startTime;
+print $useTime . "(s)\n";
 print "\ndone!\n";
+
+function simpleUrl($uri)
+{
+    $cfg = getCfg();
+    $url = "{$cfg['domain']}{$cfg['basePath']}{$uri}";
+}
+
+function getCfg()
+{
+    return [
+        'domain' => 'http://www.xx.com:8888',
+        'basePath' => '/test/demo/',
+    ];
+}
