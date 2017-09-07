@@ -7,12 +7,12 @@
  * @copyright Copyright (c) 2008-2017 Windwork Team. (http://www.windwork.org)
  * @license   http://opensource.org/licenses/MIT
  */
-namespace wf\route\strategy;
+namespace wf\route\adapter;
 
 /**
  * Windwork简单路由实现
  *
- * @package     wf.route.strategy
+ * @package     wf.route.adapter
  * @author      cm <cmpan@qq.com>
  * @link        http://docs.windwork.org/manual/wf.route.html
  * @since       0.1.0

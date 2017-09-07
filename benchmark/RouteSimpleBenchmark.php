@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../lib/RouteAbstract.php';
-require_once __DIR__ . '/../lib/strategy/Simple.php';
+require_once __DIR__ . '/../lib/adapter/Simple.php';
 require_once __DIR__ . '/../lib/Exception.php';
 
 
@@ -37,7 +37,7 @@ $startTime = microtime(1);
 
 $uri = 'https://www.my.com/demo/hi/yes/i/do.html#';
 for ($i = 0; $i < 10000; $i++) {
-    $routeObj = new \wf\route\strategy\Simple($cfgs);
+    $routeObj = new \wf\route\adapter\Simple($cfgs);
     $routeObj->parse($uri . mt_rand(10000, 99999));
 }
 
@@ -47,7 +47,7 @@ print $useTime . "(s)\n";
 
 // 2
 $startTime = microtime(1);
-$routeObj = new \wf\route\strategy\Simple($cfgs);
+$routeObj = new \wf\route\adapter\Simple($cfgs);
 $uri = 'https://www.my.com/demo/hi/yes/i/do.html#';
 for ($i = 0; $i < 10000; $i++) {
     $routeObj->parse($uri . mt_rand(10000, 99999));
@@ -60,7 +60,7 @@ print $useTime . "(s)\n";
 // 3
 $startTime = microtime(1);
 for ($i = 0; $i < 10000; $i++) {
-    $routeObj = new \wf\route\strategy\Simple($cfgs);
+    $routeObj = new \wf\route\adapter\Simple($cfgs);
     $routeObj->createUrl('a.b.c/r:' . mt_rand(10000, 99999));
 }
 
@@ -70,7 +70,7 @@ print $useTime . "(s)\n";
 
 // 4
 $startTime = microtime(1);
-$routeObj = new \wf\route\strategy\Simple($cfgs);
+$routeObj = new \wf\route\adapter\Simple($cfgs);
 for ($i = 0; $i < 10000; $i++) {
     $routeObj->createUrl('a.b.c/' . mt_rand(10000, 99999));
 }

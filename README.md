@@ -43,7 +43,7 @@ $cfgs = [
     'alias'       => [],
 ];
 // 创建实例
-$router = new \wf\route\strategy\Simple($cfgs);
+$router = new \wf\route\adapter\Simple($cfgs);
 ```
 
 ## 1、解析URL
@@ -58,7 +58,7 @@ print_r($routeObj);
 ```
 结果为
 ```
-wf\route\strategy\Simple Object
+wf\route\adapter\Simple Object
 (
     [ctlClass] => \app\controller\user\AuthController
     [mod] => 
@@ -81,7 +81,7 @@ wf\route\strategy\Simple Object
 
 设置useModule参数为true，启用模块,模块控制器类放在app/{模块名}/controller文件夹中
 ```
-wf\route\strategy\Simple Object
+wf\route\adapter\Simple Object
 (
     [ctlClass] => \app\user\controller\AuthController
     [mod] => user

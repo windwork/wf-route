@@ -1,11 +1,11 @@
 <?php
 
 require_once __DIR__ . '/../lib/RouteAbstract.php';
-require_once __DIR__ . '/../lib/strategy/Simple.php';
+require_once __DIR__ . '/../lib/adapter/Simple.php';
 require_once __DIR__ . '/../lib/Exception.php';
 
 use \wf\route\RouteAbstract;
-use \wf\route\strategy\Simple;
+use \wf\route\adapter\Simple;
 
 /**
  * RouteSimple test case.
